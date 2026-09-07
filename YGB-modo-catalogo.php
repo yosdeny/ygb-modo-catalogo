@@ -1,11 +1,17 @@
 <?php
 /**
  * Plugin Name: YGB Modo Catálogo / Bloqueo Total
- * Plugin URI: 
+ * Plugin URI: https://github.com/yosdeny
  * Description: Activa/desactiva el modo catálogo (con countdown) o el modo bloqueo total (sin enlaces). Configuración independiente por modo.
  * Version: 2.7.2
  * Author: YGB
- * License: GPL v2 or later
+ * Author URI: https://github.com/yosdeny
+ * Requires at least: 7.0
+ * Tested up to: 7.1
+ * Requires PHP: 8.0
+ * Tested PHP: 8.2
+ * License: GPLv2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: ygb-modo-catalogo
  */
 
