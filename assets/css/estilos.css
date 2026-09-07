@@ -1,0 +1,192 @@
+/* YGB Catálogo / Bloqueo Total - Estilos frontend */
+.ygb-container,
+.ygb-container-total {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    padding: clamp(30px, 5vw, 50px);
+    max-width: 700px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    animation: ygbFadeIn 1s ease-in-out;
+    box-sizing: border-box;
+}
+
+@keyframes ygbFadeIn {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ygb-logo,
+.ygb-logo-total {
+    max-width: min(250px, 80%);
+    height: auto;
+    margin-bottom: clamp(20px, 4vw, 30px);
+}
+
+/* ===== COUNTDOWN - SIN RECORTES, ADAPTABLE ===== */
+.ygb-countdown {
+    border-radius: 15px;
+    padding: clamp(20px, 4vw, 30px);
+    margin: clamp(20px, 4vw, 30px) 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ygb-countdown-titulo {
+    font-size: clamp(0.9em, 2.5vw, 1.1em);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    opacity: 0.9;
+    white-space: normal;
+}
+
+.ygb-countdown-timer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.ygb-countdown-item {
+    padding: clamp(8px, 2vw, 15px);
+    border-radius: 12px;
+    min-width: 70px;
+    flex: 0 1 auto;
+    backdrop-filter: blur(5px);
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.ygb-countdown-numero {
+    font-size: clamp(1.5em, 6vw, 2.8em);
+    font-weight: bold;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+.ygb-countdown-etiqueta {
+    font-size: clamp(0.7em, 2.5vw, 0.9em);
+    opacity: 0.9;
+    margin-top: 5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* ===== BOTONES (solo modo catálogo) ===== */
+.ygb-boton {
+    display: inline-block;
+    padding: clamp(8px, 1.5vw, 10px) clamp(16px, 3vw, 25px);
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: clamp(0.85em, 2.2vw, 1em);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    white-space: nowrap;
+}
+
+.ygb-boton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.ygb-boton-outline {
+    background: transparent;
+    box-shadow: none;
+}
+
+.ygb-boton-outline:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.ygb-botones {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 30px 0;
+}
+
+.ygb-footer,
+.ygb-footer-total {
+    margin-top: 40px;
+    font-size: 0.8em;
+    color: #999;
+}
+
+/* ===== BLOQUEO TOTAL (títulos, mensajes) ===== */
+.ygb-titulo-total {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    margin-bottom: 20px;
+}
+
+.ygb-mensaje-total {
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    line-height: 1.5;
+}
+
+/* ===== RESPONSIVE - QUE SE ADAPTE, NO QUE SE CORTE ===== */
+@media (max-width: 768px) {
+    .ygb-container,
+    .ygb-container-total {
+        margin: 10px;
+        padding: 20px 15px;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    .ygb-botones {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .ygb-boton {
+        width: 100%;
+        text-align: center;
+    }
+    
+    .ygb-countdown-timer {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .ygb-countdown-item {
+        min-width: 65px;
+        padding: 10px 5px;
+        flex: 0 1 auto;
+    }
+    
+    .ygb-titulo-total {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .ygb-countdown-item {
+        min-width: 60px;
+        padding: 8px 3px;
+    }
+    
+    .ygb-countdown-numero {
+        font-size: 1.3em;
+    }
+}
+
+@media (max-width: 360px) {
+    .ygb-countdown-item {
+        min-width: 55px;
+        padding: 6px 2px;
+    }
+    
+    .ygb-countdown-numero {
+        font-size: 1.2em;
+    }
+}
