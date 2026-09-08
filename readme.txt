@@ -1,8 +1,8 @@
 === YGB Modo Catálogo / Bloqueo Total ===
 Contributors: yosdeny
 Tags: catalogo, modo catalogo, mantenimiento, bloqueo, coming soon
-Requires at least: 7.0
-Tested up to: 6.7
+Requires at least: 6.6
+Tested up to: 7.1
 Stable tag: 2.7.3
 Requires PHP: 8.0
 Tested PHP: 8.4
