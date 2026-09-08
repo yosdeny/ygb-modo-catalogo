@@ -2,10 +2,10 @@
 Contributors: yosdeny
 Tags: catalogo, modo catalogo, mantenimiento, bloqueo, coming soon
 Requires at least: 7.0
-Tested up to: 7.1
-Stable tag: 2.7.2
+Tested up to: 6.7
+Stable tag: 2.7.3
 Requires PHP: 8.0
-Tested PHP: 8.2
+Tested PHP: 8.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,14 @@ Este plugin permite activar dos modos de funcionamiento para tu sitio WordPress:
 * Sin enlaces navegables
 * Personalización completa de la página de bloqueo
 
+Mejoras en la versión 2.7.3:
+* Documentación corregida sobre el uso simultáneo de modos
+* JavaScript extraído a archivo externo para mejor mantenibilidad
+* jQuery encolado explícitamente para mayor compatibilidad
+* Limpieza automática de transients mediante WP Cron
+* Mejor soporte para instalaciones multisite
+* Manejo consistente de excepciones en todo el plugin
+
 == Installation ==
 
 1. Sube los archivos del plugin a la carpeta `/wp-content/plugins/`
@@ -34,17 +42,34 @@ Este plugin permite activar dos modos de funcionamiento para tu sitio WordPress:
 == Frequently Asked Questions ==
 
 = ¿Puedo usar ambos modos al mismo tiempo? =
-No, el plugin está diseñado para que solo un modo esté activo a la vez. Si activas el modo Catálogo mientras el Bloqueo Total está activo, el Bloqueo Total se desactivará automáticamente (y viceversa). Esta exclusión mutua asegura una experiencia coherente para tus visitantes. Sin embargo, técnicamente el código permite que ambas opciones estén marcadas simultáneamente en la base de datos, pero el plugin siempre priorizará el Modo Bloqueo Total sobre el Modo Catálogo al mostrar las páginas.
+Sí, técnicamente el código permite que ambas opciones estén marcadas simultáneamente en la base de datos. Sin embargo, el plugin siempre priorizará el Modo Bloqueo Total sobre el Modo Catálogo al mostrar las páginas. Si activas el modo Catálogo mientras el Bloqueo Total está activo, ambos permanecerán activos en la configuración, pero los visitantes verán la página de bloqueo total. Esta exclusión visual asegura una experiencia coherente para tus visitantes.
 
 = ¿El plugin afecta al SEO? =
-El modo bloqueo total puede afectar el SEO si se mantiene por mucho tiempo.
+El modo bloqueo total puede afectar el SEO si se mantiene por mucho tiempo. Se recomienda usarlo solo durante períodos cortos de mantenimiento.
+
+= ¿Cómo se limpian los datos temporales? =
+El plugin incluye un proceso automático que limpia los transients acumulados cada hora. No es necesaria ninguna configuración adicional.
 
 == Changelog ==
 
+= 2.7.3 - 2026-09-08 =
+* CORRECCIÓN: Documentación actualizada sobre el uso simultáneo de modos (readme.txt)
+* MEJORA: JavaScript extraído a archivo externo (assets/js/ygb-countdown.js)
+* MEJORA: jQuery encolado explícitamente con wp_enqueue_script()
+* MEJORA: Implementación de WP Cron para limpieza automática de transients
+* MEJORA: Soporte mejorado para instalaciones multisite
+* MEJORA: Manejo consistente de excepciones en todo el plugin
+* MEJORA: Variables CSS modernas para personalización de estilos
+* FIX: Nonces AJAX con refresh automático para evitar expiración
+* FIX: Strings internacionalizables reemplazan emojis hardcoded
+
 = 2.7.2 =
-* Versión actual del plugin
+* Versión anterior del plugin
 
 == Upgrade Notice ==
+
+= 2.7.3 =
+Actualización recomendada para todos los usuarios. Incluye mejoras críticas de rendimiento, compatibilidad y documentación corregida.
 
 = 2.7.2 =
 Actualización recomendada para todos los usuarios.
