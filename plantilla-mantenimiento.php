@@ -64,11 +64,15 @@
         </div>
         
         <script>
-        jQuery(document).ready(function($) {
+        (function() {
+            // Usar la función global YGB_Countdown del archivo externo
+            var fechaObjetivo = <?php echo intval($fecha_timestamp); ?>;
+            var mensajeFinal = '<?php echo esc_js($mensaje_final); ?>';
+            
             if (typeof window.YGB_Countdown !== 'undefined') {
-                window.YGB_Countdown.init('countdown', <?php echo intval($fecha_timestamp); ?>, '<?php echo esc_js($mensaje_final); ?>');
+                window.YGB_Countdown.init('countdown', fechaObjetivo, mensajeFinal);
             }
-        });
+        })();
         </script>
         <?php 
                 else:
