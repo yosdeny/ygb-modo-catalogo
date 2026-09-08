@@ -57,9 +57,12 @@ class YGB_ModoCatalogo {
         add_action('wp_ajax_nopriv_ygb_mc_check_auth', array($this, 'ajax_check_auth'));
         add_action('admin_bar_menu', array($this, 'barra_estado'), 100);
         add_action('wp_enqueue_scripts', array($this, 'cargar_estilos_personalizados'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_countdown_script'));
         add_action('init', array($this, 'init_woo_exclusions'));
         add_action('init', array($this, 'add_woo_filters'));
         add_action('send_headers', array($this, 'enviar_headers_cache'));
+        add_action('admin_init', array($this, 'schedule_transient_cleanup'));
+        add_action('ygb_mc_cleanup_transients', array($this, 'cleanup_transients'));
         
         register_uninstall_hook(__FILE__, array('YGB_ModoCatalogo', 'desinstalar'));
     }
@@ -74,6 +77,82 @@ class YGB_ModoCatalogo {
     public function admin_enqueue_assets($hook) {
         if ('toplevel_page_ygb-catalogo' !== $hook) return;
         wp_enqueue_media();
+    }
+
+    /**
+     * Encola el script de countdown con jQuery como dependencia
+     * Solo se carga cuando un modo está activo y para usuarios no autenticados
+     */
+    public function enqueue_countdown_script() {
+        if (!$this->catalogo_activado && !$this->total_activado) {
+            return;
+        }
+        
+        if ($this->usuario_autenticado() || $this->es_peticion_auth()) {
+            return;
+        }
+
+        wp_enqueue_script(
+            'ygb-mc-countdown',
+            plugin_dir_url(__FILE__) . 'assets/js/countdown.js',
+            array('jquery'),
+            '2.7.3',
+            true
+        );
+
+        // Localizar script con textos traducibles
+        wp_localize_script('ygb-mc-countdown', 'ygbCountdownData', array(
+            'mensajeFinal' => __('¡Ya estamos disponibles!', 'ygb-modo-catalogo'),
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce' => wp_create_nonce('ygb_mc_countdown_nonce')
+        ));
+    }
+
+    /**
+     * Programa la limpieza diaria de transients
+     * Se ejecuta en admin_init para verificar si el cron job está programado
+     */
+    public function schedule_transient_cleanup() {
+        if (!wp_next_scheduled('ygb_mc_cleanup_transients')) {
+            wp_schedule_event(time(), 'daily', 'ygb_mc_cleanup_transients');
+        }
+    }
+
+    /**
+     * Limpieza de transients expirados o huérfanos
+     * Se ejecuta vía WP Cron diariamente
+     */
+    public function cleanup_transients() {
+        global $wpdb;
+        
+        // Limpiar transients de rate limiting (expiran a 1 minuto, pero por seguridad)
+        $transient_patterns = array(
+            '_transient_ygb_mc_toggle_limit_%',
+            '_transient_timeout_ygb_mc_toggle_limit_%',
+            '_transient_ygb_mc_toggle_total_limit_%',
+            '_transient_timeout_ygb_mc_toggle_total_limit_%'
+        );
+
+        if (is_multisite()) {
+            foreach ($transient_patterns as $pattern) {
+                $wpdb->query($wpdb->prepare(
+                    "DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s",
+                    $pattern
+                ));
+            }
+        } else {
+            foreach ($transient_patterns as $pattern) {
+                $wpdb->query($wpdb->prepare(
+                    "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s",
+                    $pattern
+                ));
+            }
+        }
+
+        // Limpiar caché de objetos
+        wp_cache_flush();
+        
+        error_log('[YGB] Limpieza de transients completada');
     }
 
     public function enviar_headers_cache() {
@@ -299,9 +378,12 @@ class YGB_ModoCatalogo {
             }
             return $fecha;
         } catch (Exception $e) {
-            add_settings_error('ygb_mc_opciones','invalid_countdown_date',
-                sprintf(__('La fecha del countdown no es válida. Usa el formato YYYY-MM-DD HH:MM', 'ygb-modo-catalogo'), $e->getMessage())
-            );
+            // Solo agregar error si estamos en contexto de admin
+            if (is_admin() && function_exists('add_settings_error')) {
+                add_settings_error('ygb_mc_opciones','invalid_countdown_date',
+                    __('La fecha del countdown no es válida. Usa el formato YYYY-MM-DD HH:MM', 'ygb-modo-catalogo')
+                );
+            }
             delete_option('ygb_mc_countdown_fecha');
             return '';
         }
@@ -323,9 +405,12 @@ class YGB_ModoCatalogo {
             }
             return $fecha;
         } catch (Exception $e) {
-            add_settings_error('ygb_mc_opciones','invalid_countdown_date_total',
-                __('La fecha del countdown no es válida. Usa el formato YYYY-MM-DD HH:MM', 'ygb-modo-catalogo')
-            );
+            // Solo agregar error si estamos en contexto de admin
+            if (is_admin() && function_exists('add_settings_error')) {
+                add_settings_error('ygb_mc_opciones','invalid_countdown_date_total',
+                    __('La fecha del countdown no es válida. Usa el formato YYYY-MM-DD HH:MM', 'ygb-modo-catalogo')
+                );
+            }
             delete_option('ygb_mc_total_countdown_fecha');
             return '';
         }
@@ -518,13 +603,20 @@ class YGB_ModoCatalogo {
         
         add_action('admin_footer', function() {
             if (!is_admin_bar_showing()) return;
+            
+            // Generar nonces frescos para evitar expiración
+            $nonce_catalogo = wp_create_nonce('ygb_mc_nonce_catalogo');
+            $nonce_total = wp_create_nonce('ygb_mc_nonce_total');
             ?>
             <script>
+            // Definir ajaxurl correctamente
+            var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+            
             function ygbToggleCatalogo() {
                 if(confirm('<?php echo esc_js(__('¿Cambiar estado del MODO CATÁLOGO?', 'ygb-modo-catalogo')); ?>')) {
                     jQuery.post(ajaxurl, {
                         action: 'ygb_mc_toggle_catalogo',
-                        nonce: '<?php echo esc_js(wp_create_nonce('ygb_mc_nonce_catalogo')); ?>'
+                        nonce: '<?php echo esc_js($nonce_catalogo); ?>'
                     }).done(function(response) {
                         if (response.success) location.reload();
                         else alert(response.data || 'Error');
@@ -536,7 +628,7 @@ class YGB_ModoCatalogo {
                 if(confirm('<?php echo esc_js(__('¿Cambiar estado del MODO BLOQUEO TOTAL?', 'ygb-modo-catalogo')); ?>')) {
                     jQuery.post(ajaxurl, {
                         action: 'ygb_mc_toggle_total',
-                        nonce: '<?php echo esc_js(wp_create_nonce('ygb_mc_nonce_total')); ?>'
+                        nonce: '<?php echo esc_js($nonce_total); ?>'
                     }).done(function(response) {
                         if (response.success) location.reload();
                         else alert(response.data || 'Error');
@@ -704,6 +796,13 @@ class YGB_ModoCatalogo {
 
         <script>
         jQuery(document).ready(function($) {
+            // Definir ajaxurl correctamente
+            var ajaxurl = '<?php echo admin_url('admin-ajax.php'); ?>';
+            
+            // Generar nonces frescos (se regeneran en cada carga de página)
+            var nonceCatalogo = '<?php echo esc_js(wp_create_nonce('ygb_mc_nonce_catalogo')); ?>';
+            var nonceTotal = '<?php echo esc_js(wp_create_nonce('ygb_mc_nonce_total')); ?>';
+            
             // Tabs
             $('#tab-catalogo-link').click(function(e) {
                 e.preventDefault();
@@ -724,7 +823,7 @@ class YGB_ModoCatalogo {
             $('#ygb-toggle-catalogo').click(function() {
                 var $btn = $(this);
                 $btn.prop('disabled', true).text('<?php echo esc_js(__('Procesando...', 'ygb-modo-catalogo')); ?>');
-                $.post(ajaxurl, { action: 'ygb_mc_toggle_catalogo', nonce: '<?php echo esc_js(wp_create_nonce('ygb_mc_nonce_catalogo')); ?>' })
+                $.post(ajaxurl, { action: 'ygb_mc_toggle_catalogo', nonce: nonceCatalogo })
                 .done(function(response) {
                     if(response.success) location.reload();
                     else alert(response.data);
@@ -736,7 +835,7 @@ class YGB_ModoCatalogo {
             $('#ygb-toggle-total').click(function() {
                 var $btn = $(this);
                 $btn.prop('disabled', true).text('<?php echo esc_js(__('Procesando...', 'ygb-modo-catalogo')); ?>');
-                $.post(ajaxurl, { action: 'ygb_mc_toggle_total', nonce: '<?php echo esc_js(wp_create_nonce('ygb_mc_nonce_total')); ?>' })
+                $.post(ajaxurl, { action: 'ygb_mc_toggle_total', nonce: nonceTotal })
                 .done(function(response) {
                     if(response.success) location.reload();
                     else alert(response.data);
