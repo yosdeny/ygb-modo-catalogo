@@ -1,11 +1,11 @@
 === YGB Modo Catálogo / Bloqueo Total ===
 Contributors: yosdeny
 Tags: catalogo, modo catalogo, mantenimiento, bloqueo, coming soon
-Requires at least: 6.6
+Requires at least: 7.0
 Tested up to: 7.1
 Stable tag: 2.7.3
 Requires PHP: 8.0
-Tested PHP: 8.4
+Tested PHP: 8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
