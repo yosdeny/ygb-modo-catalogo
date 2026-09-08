@@ -39,6 +39,7 @@
                 $ahora = new DateTime('now', $timezone);
                 if ($fecha_obj > $ahora):
                     $fecha_timestamp = $fecha_obj->getTimestamp() * 1000;
+                    $mensaje_final = __('¡Ya estamos disponibles!', 'ygb-modo-catalogo');
         ?>
         <div class="ygb-countdown" id="countdown">
             <div class="ygb-countdown-titulo"><?php _e('Tiempo restante', 'ygb-modo-catalogo'); ?></div>
@@ -63,55 +64,11 @@
         </div>
         
         <script>
-        (function() {
-            var fechaObjetivo = <?php echo intval($fecha_timestamp); ?>;
-            var countdownElement = document.getElementById('countdown');
-            
-            if (!countdownElement) return;
-            
-            function actualizarCountdown() {
-                var ahora = new Date().getTime();
-                var diff = fechaObjetivo - ahora;
-                
-                // Protección contra fechas pasadas o negativas
-                if (diff <= 0) {
-                    if (countdownElement) {
-                        countdownElement.innerHTML = '<div class="ygb-countdown" style="padding:30px;">' + 
-                            '<div class="ygb-countdown-titulo">✨ <?php echo esc_js(__('¡Ya estamos disponibles!', 'ygb-modo-catalogo')); ?></div>' + 
-                            '</div>';
-                    }
-                    return;
-                }
-                
-                // Asegurar que diff no sea negativo (por si acaso)
-                diff = Math.max(0, diff);
-                
-                var dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-                var horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                var segundos = Math.floor((diff % (1000 * 60)) / 1000);
-                
-                var diasElem = document.getElementById('dias');
-                var horasElem = document.getElementById('horas');
-                var minutosElem = document.getElementById('minutos');
-                var segundosElem = document.getElementById('segundos');
-                
-                if (diasElem) diasElem.innerText = dias.toString().padStart(2, '0');
-                if (horasElem) horasElem.innerText = horas.toString().padStart(2, '0');
-                if (minutosElem) minutosElem.innerText = minutos.toString().padStart(2, '0');
-                if (segundosElem) segundosElem.innerText = segundos.toString().padStart(2, '0');
+        jQuery(document).ready(function($) {
+            if (typeof window.YGB_Countdown !== 'undefined') {
+                window.YGB_Countdown.init('countdown', <?php echo intval($fecha_timestamp); ?>, '<?php echo esc_js($mensaje_final); ?>');
             }
-            
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    actualizarCountdown();
-                    setInterval(actualizarCountdown, 1000);
-                });
-            } else {
-                actualizarCountdown();
-                setInterval(actualizarCountdown, 1000);
-            }
-        })();
+        });
         </script>
         <?php 
                 else:
