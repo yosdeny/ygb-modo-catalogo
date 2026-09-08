@@ -3,7 +3,7 @@
  * Plugin Name: YGB Modo Catálogo / Bloqueo Total
  * Plugin URI: https://github.com/yosdeny
  * Description: Activa/desactiva el modo catálogo (con countdown) o el modo bloqueo total (sin enlaces). Configuración independiente por modo.
- * Version: 2.7.2
+ * Version: 2.7.3
  * Author: YGB
  * Author URI: https://github.com/yosdeny
  * Requires at least: 7.0
