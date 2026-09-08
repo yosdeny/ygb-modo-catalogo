@@ -182,40 +182,12 @@
         </div>
         <script>
         (function() {
+            // Usar la función global YGB_Countdown del archivo externo
             var fechaObjetivo = <?php echo intval($fecha_timestamp); ?>;
-            var countdownElement = document.getElementById('countdown');
-            if (!countdownElement) return;
-            function actualizarCountdown() {
-                var ahora = new Date().getTime();
-                var diff = fechaObjetivo - ahora;
-                if (diff <= 0) {
-                    if (countdownElement) {
-                        countdownElement.innerHTML = '<div class="ygb-countdown" style="padding:30px;"><div class="ygb-countdown-titulo">✨ <?php echo esc_js(__('¡Ya estamos disponibles!', 'ygb-modo-catalogo')); ?></div></div>';
-                    }
-                    return;
-                }
-                diff = Math.max(0, diff);
-                var dias = Math.floor(diff / (1000 * 60 * 60 * 24));
-                var horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                var minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                var segundos = Math.floor((diff % (1000 * 60)) / 1000);
-                var diasElem = document.getElementById('dias');
-                var horasElem = document.getElementById('horas');
-                var minutosElem = document.getElementById('minutos');
-                var segundosElem = document.getElementById('segundos');
-                if (diasElem) diasElem.innerText = dias.toString().padStart(2, '0');
-                if (horasElem) horasElem.innerText = horas.toString().padStart(2, '0');
-                if (minutosElem) minutosElem.innerText = minutos.toString().padStart(2, '0');
-                if (segundosElem) segundosElem.innerText = segundos.toString().padStart(2, '0');
-            }
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    actualizarCountdown();
-                    setInterval(actualizarCountdown, 1000);
-                });
-            } else {
-                actualizarCountdown();
-                setInterval(actualizarCountdown, 1000);
+            var mensajeFinal = '<?php echo esc_js(__('¡Ya estamos disponibles!', 'ygb-modo-catalogo')); ?>';
+            
+            if (typeof window.YGB_Countdown !== 'undefined') {
+                window.YGB_Countdown.init('countdown', fechaObjetivo, mensajeFinal);
             }
         })();
         </script>

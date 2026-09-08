@@ -34,7 +34,7 @@ Este plugin permite activar dos modos de funcionamiento para tu sitio WordPress:
 == Frequently Asked Questions ==
 
 = ¿Puedo usar ambos modos al mismo tiempo? =
-No, el plugin está diseñado para que solo un modo esté activo a la vez. Si activas el modo Catálogo mientras el Bloqueo Total está activo, el Bloqueo Total se desactivará automáticamente (y viceversa). Esta exclusión mutua asegura una experiencia coherente para tus visitantes.
+No, el plugin está diseñado para que solo un modo esté activo a la vez. Si activas el modo Catálogo mientras el Bloqueo Total está activo, el Bloqueo Total se desactivará automáticamente (y viceversa). Esta exclusión mutua asegura una experiencia coherente para tus visitantes. Sin embargo, técnicamente el código permite que ambas opciones estén marcadas simultáneamente en la base de datos, pero el plugin siempre priorizará el Modo Bloqueo Total sobre el Modo Catálogo al mostrar las páginas.
 
 = ¿El plugin afecta al SEO? =
 El modo bloqueo total puede afectar el SEO si se mantiene por mucho tiempo.
