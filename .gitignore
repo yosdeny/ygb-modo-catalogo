@@ -1,1 +1,1 @@
-Nothing needs to be added to the .gitignore file based on the provided file changes. The modified files (YGB-modo-catalogo.php and readme.txt) are source code and documentation files that should not be ignored.
+Nothing needs to be added to .gitignore since the only modified file is a PHP source file (.php) which should not be ignored.
