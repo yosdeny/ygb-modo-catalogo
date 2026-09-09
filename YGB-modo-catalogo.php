@@ -127,10 +127,10 @@ class YGB_ModoCatalogo {
         
         // Limpiar transients de rate limiting (expiran a 1 minuto, pero por seguridad)
         $transient_patterns = array(
-            '_transient_ygb_mc_toggle_limit_%',
-            '_transient_timeout_ygb_mc_toggle_limit_%',
-            '_transient_ygb_mc_toggle_total_limit_%',
-            '_transient_timeout_ygb_mc_toggle_total_limit_%'
+            '_transient_ygb_mc_toggle_limit_%%',
+            '_transient_timeout_ygb_mc_toggle_limit_%%',
+            '_transient_ygb_mc_toggle_total_limit_%%',
+            '_transient_timeout_ygb_mc_toggle_total_limit_%%'
         );
 
         if (is_multisite()) {
@@ -184,12 +184,12 @@ class YGB_ModoCatalogo {
         if (is_multisite()) {
             $wpdb->query($wpdb->prepare(
                 "DELETE FROM {$wpdb->sitemeta} WHERE meta_key LIKE %s OR meta_key LIKE %s",
-                '_transient_ygb_mc_toggle_limit_%','_transient_ygb_mc_toggle_total_limit_%'
+                '_transient_ygb_mc_toggle_limit_%%','_transient_ygb_mc_toggle_total_limit_%%'
             ));
         } else {
             $wpdb->query($wpdb->prepare(
                 "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s",
-                '_transient_ygb_mc_toggle_limit_%','_transient_ygb_mc_toggle_total_limit_%'
+                '_transient_ygb_mc_toggle_limit_%%','_transient_ygb_mc_toggle_total_limit_%%'
             ));
         }
         wp_cache_flush();
