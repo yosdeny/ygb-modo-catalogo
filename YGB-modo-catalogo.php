@@ -55,6 +55,7 @@ class YGB_ModoCatalogo {
         add_action('wp_ajax_ygb_mc_toggle_catalogo', array($this, 'ajax_toggle_catalogo'));
         add_action('wp_ajax_ygb_mc_toggle_total', array($this, 'ajax_toggle_total'));
         add_action('wp_ajax_nopriv_ygb_mc_check_auth', array($this, 'ajax_check_auth'));
+        add_action('wp_ajax_ygb_mc_check_auth', array($this, 'ajax_check_auth'));
         add_action('admin_bar_menu', array($this, 'barra_estado'), 100);
         add_action('wp_enqueue_scripts', array($this, 'cargar_estilos_personalizados'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_countdown_script'));
@@ -334,6 +335,14 @@ class YGB_ModoCatalogo {
     }
 
     public function ajax_check_auth() {
+        // Verificar nonce para mayor seguridad
+        $nonce = isset($_POST['nonce']) ? sanitize_text_field($_POST['nonce']) : '';
+        
+        if (!wp_verify_nonce($nonce, 'ygb_mc_countdown_nonce')) {
+            wp_send_json_error(array('authenticated' => false, 'error' => 'Invalid nonce'));
+            return;
+        }
+        
         if ($this->usuario_autenticado()) {
             wp_send_json_success(array('authenticated' => true));
         } else {
