@@ -55,6 +55,7 @@ class YGB_ModoCatalogo {
         add_action('wp_ajax_ygb_mc_toggle_catalogo', array($this, 'ajax_toggle_catalogo'));
         add_action('wp_ajax_ygb_mc_toggle_total', array($this, 'ajax_toggle_total'));
         add_action('wp_ajax_ygb_mc_check_auth', array($this, 'ajax_check_auth'));
+        add_action('wp_ajax_nopriv_ygb_mc_check_auth', array($this, 'ajax_check_auth'));
         add_action('admin_bar_menu', array($this, 'barra_estado'), 100);
         add_action('wp_enqueue_scripts', array($this, 'cargar_estilos_personalizados'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_countdown_script'));
